@@ -1,0 +1,87 @@
+---
+name: CI
+"on":
+  push:
+    branches:
+      - main
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  formula:
+    name: Test ${{ matrix.target }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: macos-arm64
+            runner: macos-14
+            asset: stay-v0.0.86-aarch64-apple-darwin.tar.gz
+            checksum: >-
+              5e313ab7dbbe53329635587551a22f39f5b61f18de0d72d886363b88facedee0
+          - target: macos-x86_64
+            runner: macos-15-intel
+            asset: stay-v0.0.86-x86_64-apple-darwin.tar.gz
+            checksum: >-
+              bd9793b85d13da05472e634418d3722f7d8b3b038a3b125a0abe8d36d86fbe2a
+          - target: linux-arm64
+            runner: ubuntu-24.04-arm
+            asset: stay-v0.0.86-aarch64-unknown-linux-gnu.tar.gz
+            checksum: >-
+              9daf0b200f696c646b20b2a1c1b5905bbda6771ccb663ebb058329b4d0f640da
+          - target: linux-x86_64
+            runner: ubuntu-24.04
+            asset: stay-v0.0.86-x86_64-unknown-linux-gnu.tar.gz
+            checksum: >-
+              64c63305fefacb696647880b7cf30baf94e9c10365630878f03d4adf2e4c02ce
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 15
+    steps:
+      - name: Check out tap
+        uses: >-
+          actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+      - name: Set up Homebrew on Linux
+        if: runner.os == 'Linux'
+        uses: >-
+          Homebrew/actions/setup-homebrew@1f8e202ffddf94def7f42f6fa3a482e821489f9c
+      - name: Install Homebrew formula
+        env:
+          ASSET: ${{ matrix.asset }}
+          CHECKSUM: ${{ matrix.checksum }}
+          RELEASE_REPOSITORY: nevdelap/stay
+        run: |
+          set -euo pipefail
+          release_url="https://github.com/$RELEASE_REPOSITORY/releases/download/v0.0.86"
+          brew tap nevdelap/stay
+          tap_path="$(brew --repository nevdelap/stay)"
+          formula_source_path="Formula/stay.rb"
+          formula_destination_path="$tap_path/Formula/stay.rb"
+          if [[ ! -e "$formula_destination_path" ]] ||
+             ! cmp "$formula_source_path" "$formula_destination_path" \
+               >/dev/null 2>&1; then
+            mkdir -p "$tap_path/Formula"
+            cp "$formula_source_path" "$formula_destination_path"
+          fi
+          test -f "$formula_destination_path"
+          cmp "$formula_source_path" "$formula_destination_path"
+          brew update
+          brew audit --strict --new --formula nevdelap/stay/stay
+          brew style --formula nevdelap/stay/stay
+          brew fetch --force --retry nevdelap/stay/stay
+          asset_path="$(brew --cache nevdelap/stay/stay)"
+          test -f "$asset_path"
+          release_checksum="$(
+            curl --fail --silent --show-error --location \
+              "$release_url/SHA256SUMS" |
+              awk -v asset="$ASSET" '$2 == asset { print $1 }'
+          )"
+          test "$release_checksum" = "$CHECKSUM"
+          case "$(uname -s)" in
+            Darwin) checksum_command=(shasum -a 256 -c -) ;;
+            Linux) checksum_command=(sha256sum --check) ;;
+            *) echo "unsupported host" >&2; exit 1 ;;
+          esac
+          printf '%s  %s\n' "$release_checksum" "$asset_path" |
+            "${checksum_command[@]}"
+          brew install nevdelap/stay/stay
+          brew test nevdelap/stay/stay
