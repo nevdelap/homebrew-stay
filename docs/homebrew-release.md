@@ -64,6 +64,34 @@ checksums in the work log or final report so the change can be audited.
 
 ## Local checks
 
+The easiest way to run the host-side checks is from the repository root:
+
+```sh
+./scripts/check-homebrew-release.sh
+```
+
+The script prepares the local tap formula and runs the audit, style, fetch,
+install/reinstall, and formula test checks below. It updates the local
+Homebrew metadata and changes the local tap checkout; it does not change this
+Git repository or publish anything. It mirrors the output to the terminal and
+writes the complete result to the ignored file
+`.homebrew-release-check.log`.
+
+On NixOS, the script does not require a native Homebrew installation. If
+`brew` is unavailable but `podman` or `docker` is present, it runs itself in
+the small `ubuntu:26.04` container image. The container installs only the
+required build tools and Homebrew prerequisites, then installs Homebrew as a
+non-root user matching the host user. If needed, make Podman available for the
+current shell with:
+
+```sh
+nix shell nixpkgs#podman
+./scripts/check-homebrew-release.sh
+```
+
+This provides the Linux Homebrew check. GitHub Actions remains responsible for
+the macOS and ARM64 jobs.
+
 If Homebrew is available, run the equivalent of:
 
 ```sh
