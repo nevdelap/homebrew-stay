@@ -70,8 +70,13 @@ apt-get install --yes --no-install-recommends \
   curl \
   file \
   git \
+  man-db \
   procps \
   sudo
+
+if [[ -x /usr/bin/man.REAL && ! -e /usr/local/bin/man ]]; then
+  ln -s /usr/bin/man.REAL /usr/local/bin/man
+fi
 
 if [[ "$host_uid" == 0 ]]; then
   printf '%s\n' 'Run this checker as a non-root host user.' >&2
