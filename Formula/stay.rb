@@ -26,6 +26,7 @@ class Stay < Formula
 
   def install
     bin.install "stay"
+    man1.install "stay.1"
   end
 
   test do
@@ -43,6 +44,11 @@ class Stay < Formula
 
     begin
       assert_equal "stay #{version}", shell_output("#{bin}/stay --version").strip
+
+      man_path = Pathname.new(shell_output("man -w stay").strip)
+      assert_path_exists man_path
+      assert_equal "stay.1", man_path.basename.to_s
+      assert_match "STAY(1)", shell_output("MANPAGER=cat man stay")
 
       inventory = JSON.parse(shell_output("#{bin}/stay list --json"))
       assert_equal [], inventory.fetch("sessions")

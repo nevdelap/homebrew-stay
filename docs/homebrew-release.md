@@ -29,10 +29,14 @@ When the user says **“do a release”**, Igor should:
 5. Update [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) with the
    same release version, four asset names, and four checksums. The formula and
    CI must refer to exactly the same release.
-6. Run the checks that are available locally, inspect the diff, and leave a
+6. Preserve the formula's installation behavior: install the `stay` binary
+   with `bin.install "stay"` and the upstream `stay.1` manual page with
+   `man1.install "stay.1"`. The formula test must verify that `man -w stay`
+   discovers the installed page and that `MANPAGER=cat man stay` renders it.
+7. Run the checks that are available locally, inspect the diff, and leave a
    focused, PR-ready change. Do not push or merge unless the user explicitly
    asks for publication.
-7. Report the selected release, asset/checksum verification, changed files,
+8. Report the selected release, asset/checksum verification, changed files,
    checks run, and the remaining user action. Normally the user must push the
    branch, open or update the pull request, and merge it into `main`.
 
@@ -55,8 +59,8 @@ Before editing, verify:
 - all four expected archive names exist;
 - `SHA256SUMS` contains one entry for each expected archive;
 - each checksum is a 64-character lowercase SHA-256 digest; and
-- each archive contains the `stay` executable at the path expected by
-  `bin.install "stay"`.
+- each archive contains the `stay` executable and `stay.1` manual page at the
+  paths expected by `bin.install "stay"` and `man1.install "stay.1"`.
 
 A temporary directory may be used for downloads. Remove only that temporary
 directory after verification. Keep the release tag and the four verified
@@ -80,9 +84,10 @@ writes the complete result to the ignored file
 On NixOS, the script does not require a native Homebrew installation. If
 `brew` is unavailable but `podman` or `docker` is present, it runs itself in
 the small `ubuntu:26.04` container image. The container installs only the
-required build tools and Homebrew prerequisites, then installs Homebrew as a
-non-root user matching the host user. If needed, make Podman available for the
-current shell with:
+required build tools, `man-db`, and Homebrew prerequisites, then installs
+Homebrew as a non-root user matching the host user. `man-db` is included so
+the formula test can verify manual-page discovery and rendering in the
+minimized image. If needed, make Podman available for the current shell with:
 
 ```sh
 nix shell nixpkgs#podman
@@ -132,5 +137,5 @@ brew update
 brew upgrade nevdelap/stay/stay
 ```
 
-The formula continues to install the upstream binary and the `tmux` runtime
-dependency; it does not compile Stay from source.
+The formula continues to install the upstream binary, its `stay.1` manual
+page, and the `tmux` runtime dependency; it does not compile Stay from source.
