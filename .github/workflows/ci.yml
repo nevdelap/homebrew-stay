@@ -16,24 +16,24 @@ jobs:
         include:
           - target: macos-arm64
             runner: macos-14
-            asset: stay-v0.0.88-aarch64-apple-darwin.tar.gz
+            asset: stay-v0.0.89-aarch64-apple-darwin.tar.gz
             checksum: >-
-              6a0a215097a49a634e9620c33553132b0f3ad78bdcd007c30d6b64921ace6eab
+              55eed6718e1b1ddee64d3a2bed6f0d0a3bac64c6601533dce1a431fe72555c48
           - target: macos-x86_64
             runner: macos-15-intel
-            asset: stay-v0.0.88-x86_64-apple-darwin.tar.gz
+            asset: stay-v0.0.89-x86_64-apple-darwin.tar.gz
             checksum: >-
-              9583e27ae12228f83db15fa72f319b3faf62639e64b56e9aa389bec58fec18f8
+              206cf6e68e751d1c9c4330ea511499d9eef9c6c59175e7780e44553dd2ada68b
           - target: linux-arm64
             runner: ubuntu-24.04-arm
-            asset: stay-v0.0.88-aarch64-unknown-linux-gnu.tar.gz
+            asset: stay-v0.0.89-aarch64-unknown-linux-gnu.tar.gz
             checksum: >-
-              b41d5260b60163dad245466a49d44d47f0b19b3a4725079bd17bc7e6b5921022
+              79d3044422b70fee27ab6550564e618879f01bba3917631fb6005a44e69b3e00
           - target: linux-x86_64
             runner: ubuntu-24.04
-            asset: stay-v0.0.88-x86_64-unknown-linux-gnu.tar.gz
+            asset: stay-v0.0.89-x86_64-unknown-linux-gnu.tar.gz
             checksum: >-
-              5560913eefda4dccb7b357f34e3fe41160cc6d27a149a75985f502e52c91a022
+              74f70a27c8885071c6a0bb5064841340211822fa5cfec95042798f3e48962dc1
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 15
     steps:
@@ -51,7 +51,7 @@ jobs:
           RELEASE_REPOSITORY: nevdelap/stay
         run: |
           set -euo pipefail
-          release_url="https://github.com/$RELEASE_REPOSITORY/releases/download/v0.0.88"
+          release_url="https://github.com/$RELEASE_REPOSITORY/releases/download/v0.0.89"
           formula_source_path="$RUNNER_TEMP/stay-formula.rb"
           cp Formula/stay.rb "$formula_source_path"
           brew tap nevdelap/stay
