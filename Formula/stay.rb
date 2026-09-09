@@ -6,21 +6,21 @@ class Stay < Formula
 
   on_macos do
     if Hardware::CPU.arm?
-      url "https://github.com/nevdelap/stay/releases/download/v0.0.89/stay-v0.0.89-aarch64-apple-darwin.tar.gz"
-      sha256 "55eed6718e1b1ddee64d3a2bed6f0d0a3bac64c6601533dce1a431fe72555c48"
+      url "https://github.com/nevdelap/stay/releases/download/v0.0.90/stay-v0.0.90-aarch64-apple-darwin.tar.gz"
+      sha256 "0767ea526cd485fb0ec4af90e63e8dbd52ecdc0561f08559c076c6a18df1572f"
     else
-      url "https://github.com/nevdelap/stay/releases/download/v0.0.89/stay-v0.0.89-x86_64-apple-darwin.tar.gz"
-      sha256 "206cf6e68e751d1c9c4330ea511499d9eef9c6c59175e7780e44553dd2ada68b"
+      url "https://github.com/nevdelap/stay/releases/download/v0.0.90/stay-v0.0.90-x86_64-apple-darwin.tar.gz"
+      sha256 "5dffd22949c962fcd81394caefefe2d86d84310d6665de1ce9d40b61d619b40e"
     end
   end
 
   on_linux do
     if Hardware::CPU.arm?
-      url "https://github.com/nevdelap/stay/releases/download/v0.0.89/stay-v0.0.89-aarch64-unknown-linux-gnu.tar.gz"
-      sha256 "79d3044422b70fee27ab6550564e618879f01bba3917631fb6005a44e69b3e00"
+      url "https://github.com/nevdelap/stay/releases/download/v0.0.90/stay-v0.0.90-aarch64-unknown-linux-gnu.tar.gz"
+      sha256 "8d3f94b2b945121beff80af9049954ffa00ef94dc17602a81912c3683a148780"
     else
-      url "https://github.com/nevdelap/stay/releases/download/v0.0.89/stay-v0.0.89-x86_64-unknown-linux-gnu.tar.gz"
-      sha256 "74f70a27c8885071c6a0bb5064841340211822fa5cfec95042798f3e48962dc1"
+      url "https://github.com/nevdelap/stay/releases/download/v0.0.90/stay-v0.0.90-x86_64-unknown-linux-gnu.tar.gz"
+      sha256 "a26ea47cc0f80b589e13c4c53f9f205baab33327b450243e8a8171648aa87bf2"
     end
   end
 
