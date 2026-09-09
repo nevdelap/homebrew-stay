@@ -56,11 +56,13 @@ jobs:
           cp Formula/stay.rb "$formula_source_path"
           # GitHub-hosted runners may have third-party taps installed whose
           # formulas are invalid on the current platform. Keep this test
-          # isolated to official Homebrew taps and the tap under test.
+          # isolated to official Homebrew taps and the tap under test. The
+          # runner is disposable, so also remove any preinstalled formulae
+          # before untapping an unrelated repository.
           while IFS= read -r tap; do
             case "$tap" in
               homebrew/*|nevdelap/stay) ;;
-              *) brew untap "$tap" ;;
+              *) brew untap --force "$tap" ;;
             esac
           done < <(brew tap)
           brew tap nevdelap/stay
