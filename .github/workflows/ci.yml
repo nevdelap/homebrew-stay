@@ -54,6 +54,15 @@ jobs:
           release_url="https://github.com/$RELEASE_REPOSITORY/releases/download/v0.0.90"
           formula_source_path="$RUNNER_TEMP/stay-formula.rb"
           cp Formula/stay.rb "$formula_source_path"
+          # GitHub-hosted runners may have third-party taps installed whose
+          # formulas are invalid on the current platform. Keep this test
+          # isolated to official Homebrew taps and the tap under test.
+          while IFS= read -r tap; do
+            case "$tap" in
+              homebrew/*|nevdelap/stay) ;;
+              *) brew untap "$tap" ;;
+            esac
+          done < <(brew tap)
           brew tap nevdelap/stay
           brew update
           tap_path="$(brew --repository nevdelap/stay)"
